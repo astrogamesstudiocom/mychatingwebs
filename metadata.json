@@ -1,0 +1,6 @@
+{
+  "name": "VerdeChat",
+  "description": "Browser-based real-time messaging, media sharing, voice notes, push notifications, and WebRTC audio/video calling platform.",
+  "requestFramePermissions": ["camera", "microphone", "notifications"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

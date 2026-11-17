@@ -1,0 +1,958 @@
+{
+  "entities": {
+    "UserPrivate": {
+      "title": "UserPrivate",
+      "description": "Private user account record containing PII and notification tokens.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Firebase Auth UID of the user."
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 320,
+          "description": "User email address (PII, owner-only)."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Display name of the user."
+        },
+        "username": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]{3,24}$",
+          "minLength": 3,
+          "maxLength": 24,
+          "description": "Unique lowercase handle."
+        },
+        "fcmTokens": {
+          "type": "array",
+          "description": "Up to 10 registered FCM web push tokens."
+        },
+        "notificationsEnabled": {
+          "type": "boolean",
+          "description": "Whether browser push notifications are enabled."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp."
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "displayName",
+        "username",
+        "fcmTokens",
+        "notificationsEnabled",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "PublicProfile": {
+      "title": "PublicProfile",
+      "description": "Non-PII public chat directory profile for contact discovery and chat headers.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Firebase Auth UID."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Public display name."
+        },
+        "username": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]{3,24}$",
+          "minLength": 3,
+          "maxLength": 24,
+          "description": "Public lowercase handle."
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Avatar image URL."
+        },
+        "about": {
+          "type": "string",
+          "maxLength": 140,
+          "description": "Short bio or status line."
+        },
+        "isOnline": {
+          "type": "boolean",
+          "description": "Current online presence flag."
+        },
+        "isDiscoverable": {
+          "type": "boolean",
+          "description": "Whether the profile appears in directory searches."
+        },
+        "lastSeen": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last active timestamp."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp."
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "username",
+        "photoURL",
+        "about",
+        "isOnline",
+        "isDiscoverable",
+        "lastSeen",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UsernameMapping": {
+      "title": "UsernameMapping",
+      "description": "Exact handle lookup mapping a lowercase username to a user UID.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Owner UID."
+        },
+        "username": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]{3,24}$",
+          "minLength": 3,
+          "maxLength": 24,
+          "description": "Lowercase username."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        }
+      },
+      "required": ["uid", "username", "createdAt"]
+    },
+    "Chat": {
+      "title": "Chat",
+      "description": "Direct or group conversation thread.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["direct", "group"],
+          "description": "Conversation type."
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 80,
+          "description": "Group title (empty string for direct chats)."
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Group avatar URL."
+        },
+        "participantIds": {
+          "type": "array",
+          "description": "Bounded list (2 to 20) of participant UIDs."
+        },
+        "createdBy": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Creator UID."
+        },
+        "lastMessageText": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Snippet of the latest message."
+        },
+        "lastMessageType": {
+          "type": "string",
+          "enum": ["text", "image", "video", "audio", "call"],
+          "description": "Type of the latest message."
+        },
+        "lastMessageSenderId": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "UID of latest message sender."
+        },
+        "lastMessageAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of latest message."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp."
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "photoURL",
+        "participantIds",
+        "createdBy",
+        "lastMessageText",
+        "lastMessageType",
+        "lastMessageSenderId",
+        "lastMessageAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "GroupChat": {
+      "title": "GroupChat",
+      "description": "Multi-participant group conversation stored in the groupChat collection.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["group"],
+          "description": "Group conversation type."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Group chat name."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Optional group topic or description."
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Group avatar URL."
+        },
+        "participantIds": {
+          "type": "array",
+          "description": "Bounded list (2 to 20) of participant UIDs."
+        },
+        "adminIds": {
+          "type": "array",
+          "description": "Bounded list (1 to 20) of group admin UIDs."
+        },
+        "createdBy": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Creator UID."
+        },
+        "lastMessageText": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Snippet of the latest message."
+        },
+        "lastMessageType": {
+          "type": "string",
+          "enum": ["text", "image", "video", "audio", "call"],
+          "description": "Type of the latest message."
+        },
+        "lastMessageSenderId": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "UID of latest message sender."
+        },
+        "lastMessageAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of latest message."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp."
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "description",
+        "photoURL",
+        "participantIds",
+        "adminIds",
+        "createdBy",
+        "lastMessageText",
+        "lastMessageType",
+        "lastMessageSenderId",
+        "lastMessageAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Individual text, photo, video, voice note, or call log message inside a chat.",
+      "type": "object",
+      "properties": {
+        "chatId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Parent chat ID."
+        },
+        "senderId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Sender UID."
+        },
+        "senderName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Sender display name."
+        },
+        "participantIds": {
+          "type": "array",
+          "description": "Participant UIDs mirrored from parent chat for secure list queries."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["text", "image", "video", "audio", "call"],
+          "description": "Message content type."
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 4000,
+          "description": "Message body or caption."
+        },
+        "mediaUrl": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "HTTPS URL to uploaded image, video, or voice audio."
+        },
+        "mediaMimeType": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "MIME type of the media attachment."
+        },
+        "mediaName": {
+          "type": "string",
+          "maxLength": 255,
+          "description": "Original file name."
+        },
+        "mediaDurationSec": {
+          "type": "number",
+          "description": "Duration in seconds for audio/video/call."
+        },
+        "readBy": {
+          "type": "array",
+          "description": "UIDs that have read the message."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Update timestamp."
+        }
+      },
+      "required": [
+        "chatId",
+        "senderId",
+        "senderName",
+        "participantIds",
+        "type",
+        "text",
+        "mediaUrl",
+        "mediaMimeType",
+        "mediaName",
+        "mediaDurationSec",
+        "readBy",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CallSession": {
+      "title": "CallSession",
+      "description": "WebRTC audio/video call signaling session.",
+      "type": "object",
+      "properties": {
+        "callerId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Caller UID."
+        },
+        "callerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Caller display name."
+        },
+        "callerPhoto": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Caller avatar URL."
+        },
+        "calleeId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Callee UID."
+        },
+        "calleeName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Callee display name."
+        },
+        "calleePhoto": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Callee avatar URL."
+        },
+        "chatId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Associated chat ID."
+        },
+        "participantIds": {
+          "type": "array",
+          "description": "Array of [callerId, calleeId]."
+        },
+        "callType": {
+          "type": "string",
+          "enum": ["audio", "video"],
+          "description": "Call media type."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ringing", "answered", "ended", "declined", "missed"],
+          "description": "Call lifecycle state."
+        },
+        "offerSdp": {
+          "type": "string",
+          "maxLength": 50000,
+          "description": "WebRTC SDP offer string."
+        },
+        "offerType": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "SDP offer type."
+        },
+        "answerSdp": {
+          "type": "string",
+          "maxLength": 50000,
+          "description": "WebRTC SDP answer string."
+        },
+        "answerType": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "SDP answer type."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Call initiation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last signaling update timestamp."
+        }
+      },
+      "required": [
+        "callerId",
+        "callerName",
+        "callerPhoto",
+        "calleeId",
+        "calleeName",
+        "calleePhoto",
+        "chatId",
+        "participantIds",
+        "callType",
+        "status",
+        "offerSdp",
+        "offerType",
+        "answerSdp",
+        "answerType",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "IceCandidate": {
+      "title": "IceCandidate",
+      "description": "WebRTC ICE candidate for peer connection negotiation.",
+      "type": "object",
+      "properties": {
+        "callId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Parent call ID."
+        },
+        "senderId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128,
+          "description": "Candidate sender UID."
+        },
+        "participantIds": {
+          "type": "array",
+          "description": "Participant UIDs of parent call."
+        },
+        "candidate": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Serialized ICE candidate string."
+        },
+        "sdpMid": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "SDP media stream identification."
+        },
+        "sdpMLineIndex": {
+          "type": "number",
+          "description": "Zero-based index of media description."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        }
+      },
+      "required": [
+        "callId",
+        "senderId",
+        "participantIds",
+        "candidate",
+        "sdpMid",
+        "sdpMLineIndex",
+        "createdAt"
+      ]
+    },
+    "OwnerConfig": {
+      "title": "OwnerConfig",
+      "description": "Locked one-time Super Admin ownership binding to the original owner UID.",
+      "type": "object",
+      "properties": {
+        "ownerUid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "ownerEmail": {
+          "type": "string",
+          "maxLength": 320
+        },
+        "locked": {
+          "type": "boolean"
+        },
+        "configuredAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["ownerUid", "ownerEmail", "locked", "configuredAt"]
+    },
+    "AdminRole": {
+      "title": "AdminRole",
+      "description": "Server-enforced admin and limited moderator RBAC records.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 320
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "role": {
+          "type": "string",
+          "enum": ["super_admin", "moderator", "support_admin"]
+        },
+        "permissions": {
+          "type": "object",
+          "properties": {
+            "viewUsers": { "type": "boolean" },
+            "manageReports": { "type": "boolean" },
+            "suspendUsers": { "type": "boolean" },
+            "manageSettings": { "type": "boolean" },
+            "viewLogs": { "type": "boolean" }
+          }
+        },
+        "grantedBy": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "displayName",
+        "role",
+        "permissions",
+        "grantedBy",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AccountModeration": {
+      "title": "AccountModeration",
+      "description": "Account status enforcement (active, suspended, blocked, removed).",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "suspended", "blocked", "removed"]
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "moderatedBy": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "status", "reason", "moderatedBy", "createdAt", "updatedAt"]
+    },
+    "ModerationReport": {
+      "title": "ModerationReport",
+      "description": "User-submitted report for a user or message, with optional consented context snapshot.",
+      "type": "object",
+      "properties": {
+        "reportType": {
+          "type": "string",
+          "enum": ["user", "message"]
+        },
+        "reportedUid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "reportedName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "reportedByUid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "reportedByName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "chatId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "chatCollection": {
+          "type": "string",
+          "enum": ["", "chats", "groupChat"]
+        },
+        "messageId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "messageTextSnippet": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "contextMessages": {
+          "type": "array"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "details": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "status": {
+          "type": "string",
+          "enum": ["open", "under_review", "resolved", "dismissed"]
+        },
+        "resolutionNote": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "reviewedBy": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "userNoticeSent": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "reportType",
+        "reportedUid",
+        "reportedName",
+        "reportedByUid",
+        "reportedByName",
+        "chatId",
+        "chatCollection",
+        "messageId",
+        "messageTextSnippet",
+        "contextMessages",
+        "reason",
+        "details",
+        "status",
+        "resolutionNote",
+        "reviewedBy",
+        "userNoticeSent",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WebsiteSettings": {
+      "title": "WebsiteSettings",
+      "description": "Global platform configuration, privacy disclosure, and data retention policy.",
+      "type": "object",
+      "properties": {
+        "siteName": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "welcomeNotice": { "type": "string", "maxLength": 300 },
+        "moderationPolicySummary": { "type": "string", "maxLength": 1000 },
+        "allowNewRegistrations": { "type": "boolean" },
+        "allowGroupCreation": { "type": "boolean" },
+        "allowVoiceVideoCalls": { "type": "boolean" },
+        "allowMediaUploads": { "type": "boolean" },
+        "maintenanceMode": { "type": "boolean" },
+        "ownerMonitoringEnabled": { "type": "boolean" },
+        "allowPrivateContextReview": { "type": "boolean" },
+        "dataRetentionDays": { "type": "number" },
+        "updatedBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "siteName",
+        "welcomeNotice",
+        "moderationPolicySummary",
+        "allowNewRegistrations",
+        "allowGroupCreation",
+        "allowVoiceVideoCalls",
+        "allowMediaUploads",
+        "maintenanceMode",
+        "updatedBy",
+        "updatedAt"
+      ]
+    },
+    "UserPrivacyConsent": {
+      "title": "UserPrivacyConsent",
+      "description": "User acknowledgment and informed consent record for moderation privacy disclosure and data retention policy.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "consented": { "type": "boolean" },
+        "policyVersion": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "consentedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "consented", "policyVersion", "consentedAt", "updatedAt"]
+    },
+    "SystemStats": {
+      "title": "SystemStats",
+      "description": "Privacy-preserving aggregate message, chat, group, and call counters.",
+      "type": "object",
+      "properties": {
+        "totalMessages": { "type": "number" },
+        "totalChats": { "type": "number" },
+        "totalGroupChats": { "type": "number" },
+        "totalCalls": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "totalMessages",
+        "totalChats",
+        "totalGroupChats",
+        "totalCalls",
+        "updatedAt"
+      ]
+    },
+    "SystemLog": {
+      "title": "SystemLog",
+      "description": "Immutable administrative and security audit log entry.",
+      "type": "object",
+      "properties": {
+        "action": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "actorUid": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "actorName": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "actorRole": { "type": "string", "enum": ["owner", "admin", "user"] },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "targetLabel": { "type": "string", "maxLength": 120 },
+        "details": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "action",
+        "actorUid",
+        "actorName",
+        "actorRole",
+        "targetId",
+        "targetLabel",
+        "details",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserPrivate" },
+      "description": "Private user account metadata, email PII, and FCM push tokens."
+    },
+    "/publicProfiles/{userId}": {
+      "schema": { "$ref": "#/entities/PublicProfile" },
+      "description": "Non-PII public chat profile directory."
+    },
+    "/usernames/{username}": {
+      "schema": { "$ref": "#/entities/UsernameMapping" },
+      "description": "Unique lowercase username reservation mapping."
+    },
+    "/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/Chat" },
+      "description": "Direct and group chat metadata."
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Real-time messages inside a chat."
+    },
+    "/groupChat/{groupId}": {
+      "schema": { "$ref": "#/entities/GroupChat" },
+      "description": "Multi-participant group chat metadata."
+    },
+    "/groupChat/{groupId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Real-time messages inside a groupChat."
+    },
+    "/calls/{callId}": {
+      "schema": { "$ref": "#/entities/CallSession" },
+      "description": "WebRTC call signaling sessions."
+    },
+    "/calls/{callId}/callerCandidates/{candidateId}": {
+      "schema": { "$ref": "#/entities/IceCandidate" },
+      "description": "Caller ICE candidates for a WebRTC call."
+    },
+    "/calls/{callId}/calleeCandidates/{candidateId}": {
+      "schema": { "$ref": "#/entities/IceCandidate" },
+      "description": "Callee ICE candidates for a WebRTC call."
+    },
+    "/systemConfig/owner": {
+      "schema": { "$ref": "#/entities/OwnerConfig" },
+      "description": "One-time Super Admin owner binding."
+    },
+    "/admins/{userId}": {
+      "schema": { "$ref": "#/entities/AdminRole" },
+      "description": "Authorized Super Admin and limited Admin role assignments."
+    },
+    "/accountModeration/{userId}": {
+      "schema": { "$ref": "#/entities/AccountModeration" },
+      "description": "Account moderation status (active, suspended, blocked, removed)."
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/ModerationReport" },
+      "description": "User-submitted moderation reports for reported users or messages."
+    },
+    "/websiteSettings/global": {
+      "schema": { "$ref": "#/entities/WebsiteSettings" },
+      "description": "Global website configuration and moderation policy settings."
+    },
+    "/systemStats/overview": {
+      "schema": { "$ref": "#/entities/SystemStats" },
+      "description": "Aggregate message, chat, group, and call counters."
+    },
+    "/systemLogs/{logId}": {
+      "schema": { "$ref": "#/entities/SystemLog" },
+      "description": "Immutable system activity and moderation audit logs."
+    },
+    "/userPrivacyConsents/{userId}": {
+      "schema": { "$ref": "#/entities/UserPrivacyConsent" },
+      "description": "User privacy notice, owner moderation disclosure, and retention consent records."
+    }
+  }
+}
